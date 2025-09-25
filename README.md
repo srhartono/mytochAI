@@ -36,6 +36,11 @@ An AI framework for analyzing the link between multi-omics data (SNP, DNA methyl
 - Interactive dashboards with Plotly
 - Genomic landscape plots
 
+### Workflow & Repo
+- GitHub
+- Snakemake (TBA)
+- Pypi (TBA)
+
 ## Installation
 
 ### Prerequisites
