@@ -1,6 +1,6 @@
 # mytochAI - Vanilla
 
-A comprehensive AI framework for analyzing correlations between SNPs and DNA methylation using classical machine learning models (LDA, HMM) and SOTA AI models (GPT, BERT, Enformer).
+An AI framework for analyzing the link between multi-omics data (SNP, DNA methylation) using classical machine learning models (LDA, HMM) and SOTA AI models (GPT, BERT, Enformer).
 
 ## Features
 
