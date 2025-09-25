@@ -1,13 +1,10 @@
 """
-Genomics Correlation Framework
-
-A comprehensive framework for analyzing correlations between SNPs and DNA methylation
-using classical machine learning models (LDA, HMM) and modern AI models (GPT, BERT).
+mytochAI
 """
 
-__version__ = "1.0.0"
-__author__ = "Genomics Research Team"
-__email__ = "research@genomics.org"
+__version__ = "0.0.1"
+__author__ = "srhartono"
+__email__ = "srhartono@ucdavis.edu"
 
 from .data import DataLoader, SNPProcessor, MethylationProcessor
 from .classic_models import ClassicModels
