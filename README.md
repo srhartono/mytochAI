@@ -4,33 +4,35 @@ An AI framework for analyzing the link between multi-omics data (SNP, DNA methyl
 
 ## Features
 
-### 🧬 Data Processing
+### Data Processing
 - **SNP Data**: VCF file support with quality filtering and minor allele frequency thresholds
 - **Methylation Data**: Beta value processing with missing data handling
 - **Sample Alignment**: Automatic alignment of samples between SNP and methylation datasets
+- TBA: Other omics (sDRIP, END-seq, ATAC-seq, Histone/TFBS, eCLIP)
 
-### 🤖 Machine Learning Models
+### Machine Learning Models
 
 #### Classical Models
 - **Linear Discriminant Analysis (LDA)**: Dimensionality reduction and classification
-- **Hidden Markov Models (HMM)**: Pattern recognition in genomic sequences and methylation domains
+- **Hidden Markov Models (HMM)**: Pattern recognition in genomic sequences and methylation domains (TBA: Pysam)
 
 #### AI Models  
-- **BERT**: Biomedical text analysis for genomic sequence patterns
+- **BERT**: Biomedical text analysis for genomic sequence patterns (WIP)
 - **GPT**: Sequence generation and pattern discovery
 - **DNABERT**: (WIP)
 - **Enformer**: (WIP)
 
-### 📊 Analysis Methods
+### Analysis Methods
 - **Statistical Correlations**: Pearson, Spearman, and Kendall correlations with multiple testing correction
-- **Machine Learning**: Feature importance analysis using Random Forest and mutual information
+- **Machine Learning**: Feature importance analysis using Random Forest and mutual information (WIP)
 - **Window-based Analysis**: Genomic window sliding analysis for local correlation patterns
-- **Non-linear Associations**: Detection using polynomial features and regularization
+- **Non-linear Associations**: Detection using polynomial features and regularization (WIP)
+- TBA: benchmarking
 
-### 📈 Visualization
-- Manhattan plots for genome-wide association patterns
+### Visualization/Evaluation (WIP)
+- Manhattan plots for GWAS
 - Correlation heatmaps and distribution plots  
-- Principal component analysis visualizations
+- PCA, AUROC, AUPRC
 - Interactive dashboards with Plotly
 - Genomic landscape plots
 
