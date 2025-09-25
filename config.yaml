@@ -1,4 +1,4 @@
-# Configuration for SNP-Methylation Correlation Analysis
+# Configuration for mytochAI
 data:
   # Input data paths
   snp_file: "data/snps.vcf"
