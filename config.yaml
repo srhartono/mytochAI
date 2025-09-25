@@ -1,0 +1,71 @@
+# Configuration for SNP-Methylation Correlation Analysis
+data:
+  # Input data paths
+  snp_file: "data/snps.vcf"
+  methylation_file: "data/methylation.txt"
+  annotation_file: "data/annotations.bed"
+  reference_fasta: "data/reference_genome.fasta"  # Optional reference genome
+  
+  # Data processing parameters
+  quality_threshold: 30
+  minor_allele_frequency: 0.05
+  methylation_beta_threshold: 0.1
+  missing_data_threshold: 0.1
+
+# BioPython integration settings
+biopython:
+  enable_biopython: true
+  sequence_context_size: 36  # Base pairs around SNPs to analyze
+  analyze_cpg_islands: true
+  extract_motifs: true
+  calculate_gc_content: true
+
+models:
+  classic:
+    lda:
+      n_components: 10
+      solver: "svd"
+      shrinkage: "auto"
+    
+    hmm:
+      n_components: 5
+      covariance_type: "full"
+      n_iter: 100
+      random_state: 42
+  
+  ai:
+    bert:
+      model_name: "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext"
+      max_length: 512
+      batch_size: 16
+    
+    gpt:
+      model_name: "gpt2" #for now, TBA
+      max_length: 1024
+      temperature: 0.7
+
+analysis:
+  correlation:
+    methods: ["pearson", "spearman", "kendall"]
+    p_value_threshold: 0.05
+    fdr_correction: "bonferroni"
+    # add more (TBA)
+    
+  window_analysis:
+    window_size: 1000000  # 1MB windows
+    step_size: 500000     # 500KB steps
+    
+  feature_selection:
+    method: "mutual_info"
+    k_best: 100
+
+visualization:
+  output_format: ["png", "pdf", "html"]
+  dpi: 300
+  figure_size: [12, 8]
+  color_palette: "viridis"
+
+output:
+  results_dir: "results"
+  save_intermediate: true
+  generate_report: true
