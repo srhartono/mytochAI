@@ -17,10 +17,8 @@ An AI framework for analyzing the link between multi-omics data (SNP, DNA methyl
 - **Hidden Markov Models (HMM)**: Pattern recognition in genomic sequences and methylation domains (TBA: Pysam)
 
 #### AI Models  
-- **BERT**: Biomedical text analysis for genomic sequence patterns (WIP)
-- **GPT**: Sequence generation and pattern discovery
-- **DNABERT**: (WIP)
-- **Enformer**: (WIP)
+- **DNABERT**
+- **Enformer** (WIP)
 
 ### Analysis Methods
 - **Statistical Correlations**: Pearson, Spearman, and Kendall correlations with multiple testing correction
