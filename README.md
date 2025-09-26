@@ -445,16 +445,6 @@ models:
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Citation
-
-If you use this framework in your research, please cite:
-
-```
-mytochAI: A comprehensive AI toolkit for analyzing 
-meta-omics associations using classical and AI-based methods. 
-Version 1.0.0 (2024).
-```
-
 ## Support
 
 For questions and support:
