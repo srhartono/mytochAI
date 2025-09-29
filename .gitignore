@@ -1,10 +1,10 @@
-<<<<<<< HEAD
 # path: .gitignore
 
 ################################################################################
 # Project-specific (from request)
 ################################################################################
 .ExperimentalScripts/
+ExperimentalScripts/
 data/
 .vscode-chat-code-block
 .history
@@ -26,7 +26,7 @@ Desktop.ini
 ################################################################################
 # Editors / IDEs
 ################################################################################
-.vscode/        # NOTE: if team shares tasks/launch, remove this blanket ignore
+.vscode/      
 .idea/
 .ipynb_checkpoints/
 
@@ -117,33 +117,6 @@ coverage.xml
 
 ################################################################################
 # Uppercase-only Markdown files
-# .gitignore uses globs, not regex.
-# We "ignore names that start with uppercase" then "unignore any that contain lowercase".
-# Result: only ALL-UPPERCASE *.md (e.g., README.md, CHANGELOG.md) remain ignored.
 ################################################################################
 [A-Z0-9_-]*.md
 ![A-Z0-9_-]*[a-z][A-Za-z0-9_-]*.md
-=======
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-pip-log.txt
-pip-delete-this-directory.txt
-
-# VS Code
-.vscode/
-*.code-workspace
-
-# Generated files
-*.png
->>>>>>> 880d1f446b4230deecb440ac266a2a22d340724b
