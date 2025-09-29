@@ -10,14 +10,6 @@ A Python script that performs Principal Component Analysis (PCA) on a dataset an
 - Visualizes data points and principal components
 - Saves plots as high-quality PNG files
 
-### Usage
-```bash
-python pcaThingy2.py
-```
-This will generate a PCA plot saved as 'pca_plot.png' in the current directory.
-
-An AI framework for analyzing the link between multi-omics data (SNP, DNA methylation) using classical machine learning models (LDA, HMM) and SOTA AI models (GPT, BERT, Enformer).
-
 ## Features
 
 ### Data Processing
