@@ -49,6 +49,7 @@ class DataLoader:
         self.config = config
         self.snp_processor = SNPProcessor(config)
         self.methylation_processor = MethylationProcessor(config)
+        self.bed_processor = BEDProcessor(config)  # NEW: BED file processor
         
         # Initialize BioPython integration if available
         self.use_biopython = BIOPYTHON_INTEGRATION_AVAILABLE and config.get('enable_biopython', True)
@@ -82,6 +83,26 @@ class DataLoader:
             )
         
         return snp_data, methylation_data, annotation_data
+    
+    def load_bed_data(self) -> Dict[str, Dict[str, pd.DataFrame]]:
+        """
+        Load all BED8 genomic interval data.
+        
+        Returns:
+            Dictionary with structure: {assay_type: {condition: DataFrame}}
+        """
+        logger.info("Loading BED8 files for multi-omics analysis...")
+        return self.bed_processor.load_all_bed_files()
+    
+    def load_treatment_comparison_data(self) -> Dict[str, Dict[str, pd.DataFrame]]:
+        """
+        Load BED data organized for treatment comparison analysis (AQR24h vs DMSO24h).
+        
+        Returns:
+            Dictionary with structure: {assay_type: {'gain': DataFrame, 'loss': DataFrame}}
+        """
+        logger.info("Loading treatment comparison data...")
+        return self.bed_processor.get_treatment_comparison_data()
     
     def load_annotations(self) -> pd.DataFrame:
         """Load genomic annotations from BED file."""
@@ -436,6 +457,203 @@ def align_samples(snp_df: pd.DataFrame, methylation_df: pd.DataFrame) -> Tuple[p
     aligned_methylation_df = methylation_df[common_samples].copy()
     
     return aligned_snp_df, aligned_methylation_df
+
+
+class BEDProcessor:
+    """
+    Processor for BED8 files containing genomic interval data from various assays
+    (END-seq, EU-seq, sDRIP-seq, RNA-seq, etc.)
+    """
+    
+    def __init__(self, config: Dict):
+        self.config = config
+        self.data_dir = Path(config.get('data', {}).get('data_dir', 'data'))
+        self.bed_files = {}
+        
+    def load_all_bed_files(self) -> Dict[str, pd.DataFrame]:
+        """
+        Load all BED8 files from the data directory and categorize them by assay type and condition.
+        
+        Returns:
+            Dictionary with structure: {assay_type: {condition: DataFrame}}
+        """
+        # Discover all BED8 files in data directory
+        bed_files = list(self.data_dir.glob("*.bed8"))
+        
+        if not bed_files:
+            logger.warning(f"No BED8 files found in {self.data_dir}")
+            return {}
+        
+        categorized_data = {}
+        
+        for bed_file in bed_files:
+            assay_info = self._parse_filename(bed_file.name)
+            if not assay_info:
+                continue
+                
+            # Load the BED file
+            bed_data = self._load_bed8_file(bed_file)
+            
+            # Categorize by assay type
+            assay_type = assay_info['assay_type']
+            condition = assay_info['condition']
+            
+            if assay_type not in categorized_data:
+                categorized_data[assay_type] = {}
+            
+            categorized_data[assay_type][condition] = bed_data
+            
+            logger.info(f"Loaded {len(bed_data)} regions from {bed_file.name}")
+        
+        self.bed_files = categorized_data
+        return categorized_data
+    
+    def _parse_filename(self, filename: str) -> Optional[Dict[str, str]]:
+        """
+        Parse BED file name to extract assay type and experimental condition.
+        
+        Expected patterns:
+        - ENDseq_AQR24h_all_gain.bed8 -> assay: ENDseq, condition: AQR24h_all_gain
+        - EUjunc_AQR24h_DMSO24h_gain.bed8 -> assay: EUjunc, condition: AQR24h_DMSO24h_gain
+        - sDRIPcombined_AQR24h_DMSO24h_loss.bed8 -> assay: sDRIP, condition: AQR24h_DMSO24h_loss
+        """
+        if not filename.endswith('.bed8'):
+            return None
+        
+        name_parts = filename.replace('.bed8', '').split('_')
+        
+        if len(name_parts) < 2:
+            return None
+        
+        # Extract assay type (first part)
+        assay_type = name_parts[0]
+        
+        # Handle special cases
+        if assay_type == 'sDRIPcombined':
+            assay_type = 'sDRIP'
+        elif assay_type == 'EUcombined':
+            assay_type = 'EU'
+        elif 'HCT116' in name_parts[0]:
+            assay_type = 'ENDseq_CPT'
+        
+        # Extract condition (remaining parts)
+        condition = '_'.join(name_parts[1:])
+        
+        return {
+            'assay_type': assay_type,
+            'condition': condition,
+            'filename': filename
+        }
+    
+    def _load_bed8_file(self, bed_file: Path) -> pd.DataFrame:
+        """
+        Load a BED8 format file.
+        
+        BED8 columns: chr, start, end, name, score, strand, transcript_id, gene_name
+        """
+        try:
+            bed_data = pd.read_csv(
+                bed_file, 
+                sep='\t', 
+                header=None,
+                names=['chr', 'start', 'end', 'annotation', 'score', 'strand', 'transcript_id', 'gene_name']
+            )
+            
+            # Add filename info
+            bed_data['source_file'] = bed_file.name
+            
+            # Parse annotation field for genomic features
+            bed_data = self._parse_annotation_field(bed_data)
+            
+            # Calculate region length
+            bed_data['length'] = bed_data['end'] - bed_data['start']
+            
+            return bed_data
+            
+        except Exception as e:
+            logger.error(f"Error loading BED file {bed_file}: {e}")
+            return pd.DataFrame()
+    
+    def _parse_annotation_field(self, bed_data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Parse the annotation field to extract genomic feature information.
+        
+        Examples:
+        - "GENEBODY_NEG218,POS231;ENST00000378609.9;GNB1" -> feature_type: GENEBODY
+        - "PROMOTER_NEG_11;ENST00000354700.10;ACAP3" -> feature_type: PROMOTER
+        """
+        feature_types = []
+        feature_positions = []
+        
+        for annotation in bed_data['annotation']:
+            if pd.isna(annotation):
+                feature_types.append('UNKNOWN')
+                feature_positions.append('')
+                continue
+            
+            parts = str(annotation).split(';')
+            if len(parts) > 0:
+                # Extract feature type from first part
+                feature_info = parts[0]
+                
+                if 'GENEBODY' in feature_info:
+                    feature_types.append('GENEBODY')
+                elif 'PROMOTER' in feature_info:
+                    feature_types.append('PROMOTER')
+                elif 'TERMINAL' in feature_info:
+                    feature_types.append('TERMINAL')
+                elif 'TERMINTER' in feature_info:
+                    feature_types.append('TERMINTER')
+                elif 'ANTIPROMOTER' in feature_info:
+                    feature_types.append('ANTIPROMOTER')
+                elif 'JUNC' in feature_info:
+                    feature_types.append('JUNCTION')
+                elif 'INTERGENIC' in feature_info:
+                    feature_types.append('INTERGENIC')
+                elif 'PEAK' in feature_info:
+                    feature_types.append('PEAK')
+                else:
+                    feature_types.append('OTHER')
+                
+                # Extract position information if present
+                feature_positions.append(feature_info)
+            else:
+                feature_types.append('UNKNOWN')
+                feature_positions.append('')
+        
+        bed_data['feature_type'] = feature_types
+        bed_data['feature_position'] = feature_positions
+        
+        return bed_data
+    
+    def get_treatment_comparison_data(self) -> Dict[str, Dict[str, pd.DataFrame]]:
+        """
+        Organize data for AQR24h treatment vs control comparisons.
+        
+        Returns:
+            Dictionary with structure: {assay_type: {'gain': DataFrame, 'loss': DataFrame, 'both': DataFrame}}
+        """
+        if not self.bed_files:
+            self.load_all_bed_files()
+        
+        treatment_data = {}
+        
+        for assay_type, conditions in self.bed_files.items():
+            treatment_data[assay_type] = {}
+            
+            # Look for gain/loss/both patterns in AQR24h treatment
+            for condition, data in conditions.items():
+                if 'AQR24h' in condition and 'DMSO24h' in condition:
+                    if 'gain' in condition:
+                        treatment_data[assay_type]['gain'] = data
+                    elif 'loss' in condition:
+                        treatment_data[assay_type]['loss'] = data
+                    elif 'both' in condition:
+                        treatment_data[assay_type]['both'] = data
+                elif 'AQR24h' in condition and 'all' in condition:
+                    treatment_data[assay_type]['all_gain'] = data
+        
+        return treatment_data
 
 
 def get_expected_correlations() -> Dict:

@@ -39,6 +39,10 @@ class GenomicsPlotter:
         # Ensure results directory exists
         self.results_dir.mkdir(exist_ok=True)
         
+        # Initialize multi-omics plotter
+        from .multiomics_visualization import MultiOmicsPlotter
+        self.multiomics_plotter = MultiOmicsPlotter(config, self.results_dir)
+        
     def create_comprehensive_report(self, analysis_results: Dict, 
                                   snp_data: pd.DataFrame, 
                                   methylation_data: pd.DataFrame) -> Dict:

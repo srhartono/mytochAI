@@ -6,6 +6,10 @@ data:
   annotation_file: "data/annotations.bed"
   reference_fasta: "data/reference_genome.fasta"  # Optional reference genome
   
+  # Multi-omics BED file analysis
+  data_dir: "data"  # Directory containing BED8 files
+  bed_file_analysis: true  # Enable BED file correlation analysis
+  
   # Data processing parameters
   quality_threshold: 30
   minor_allele_frequency: 0.05
@@ -58,6 +62,13 @@ analysis:
   feature_selection:
     method: "mutual_info"
     k_best: 100
+  
+  # Multi-omics genomic region analysis
+  genomic_regions:
+    overlap_threshold: 1  # Minimum overlap in bp
+    enrichment_p_threshold: 0.05
+    focus_assay: "ENDseq"  # Primary assay for correlation analysis
+    treatment_comparison: "AQR24h_vs_DMSO24h"
 
 visualization:
   output_format: ["png", "pdf", "html"]
