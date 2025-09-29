@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+numpy
+scikit-learn
+matplotlib
+pandas
+torch
+transformers
+biopython
+pysam
+hmmlearn
+=======
 # Core
 numpy>=1.21.0
 pandas>=1.3.0
@@ -24,3 +35,4 @@ joblib>=1.1.0
 
 # Bioinformatics (TBA: pysam)
 biopython>=1.80
+>>>>>>> 76fb5b3beb702cf43dfea15ce36f03de3727143f

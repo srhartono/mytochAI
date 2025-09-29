@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # path: .gitignore
 
 ################################################################################
@@ -122,3 +123,27 @@ coverage.xml
 ################################################################################
 [A-Z0-9_-]*.md
 ![A-Z0-9_-]*[a-z][A-Za-z0-9_-]*.md
+=======
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Generated files
+*.png
+>>>>>>> 880d1f446b4230deecb440ac266a2a22d340724b

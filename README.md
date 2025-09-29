@@ -2,6 +2,22 @@
 
 An AI framework for analyzing the link between multi-omics data (SNP, DNA methylation) using classical machine learning models (LDA, HMM) and SOTA AI models (GPT, BERT, Enformer).
 
+## PCA Visualization Tool
+A Python script that performs Principal Component Analysis (PCA) on a dataset and generates visualizations.
+
+### Features
+- Performs PCA using scikit-learn
+- Visualizes data points and principal components
+- Saves plots as high-quality PNG files
+
+### Usage
+```bash
+python pcaThingy2.py
+```
+This will generate a PCA plot saved as 'pca_plot.png' in the current directory.
+
+An AI framework for analyzing the link between multi-omics data (SNP, DNA methylation) using classical machine learning models (LDA, HMM) and SOTA AI models (GPT, BERT, Enformer).
+
 ## Features
 
 ### Data Processing
@@ -17,10 +33,8 @@ An AI framework for analyzing the link between multi-omics data (SNP, DNA methyl
 - **Hidden Markov Models (HMM)**: Pattern recognition in genomic sequences and methylation domains (TBA: Pysam)
 
 #### AI Models  
-- **BERT**: Biomedical text analysis for genomic sequence patterns (WIP)
-- **GPT**: Sequence generation and pattern discovery
-- **DNABERT**: (WIP)
-- **Enformer**: (WIP)
+- **DNABERT**
+- **Enformer** (WIP)
 
 ### Analysis Methods
 - **Statistical Correlations**: Pearson, Spearman, and Kendall correlations with multiple testing correction
@@ -447,16 +461,6 @@ models:
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Citation
-
-If you use this framework in your research, please cite:
-
-```
-mytochAI: A comprehensive AI toolkit for analyzing 
-meta-omics associations using classical and AI-based methods. 
-Version 1.0.0 (2024).
-```
-
 ## Support
 
 For questions and support:
@@ -465,3 +469,4 @@ For questions and support:
 - Review the configuration examples in `config.yaml`
 
 ---
+>>>>>>> 76fb5b3beb702cf43dfea15ce36f03de3727143f
